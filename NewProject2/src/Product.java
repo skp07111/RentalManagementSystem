@@ -6,8 +6,6 @@ public class Product {
 	private int productStock;  // 물품 재고
 	private int productAmount; // 물품 수량
 	private int productPeriod; // 물품 대여기간
-	private Date productDate; // 물품 대여일자
-
 	
 	public Product() {} // 생성자
 	
@@ -31,10 +29,6 @@ public class Product {
 		this.productPeriod = productPeriod;
 	}
 	
-	public void setProductDate(Date productDate) { // 물품 대여일자 setter 메소드
-		this.productDate = productDate;
-	}
-	
 	public String getProductCode() { // 물품 번호 getter 메소드
 		return productCode;
 	}
@@ -55,16 +49,15 @@ public class Product {
 		return productPeriod;
 	}
 	
-	public Date getProductDate() { // 물품 대여 일자 getter 메소드
-		return productDate;
-	}
-	
 	public void addStock() {
 		productStock++;
 	}
-	
+
 	public void subtractStock() {
-		productStock--;
+		if (productStock > 0) {
+			productStock--;
+			setProductStock(productStock);
+		}
 	}
 }
 
