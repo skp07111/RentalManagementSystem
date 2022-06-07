@@ -5,7 +5,8 @@ public class Product {
 	private String productName; // 물품 이름
 	private int productStock;  // 물품 재고
 	private int productAmount; // 물품 수량
-	private int productPeriod; // 물품 대여기간
+	private int rentalFee; // 1일 대여료
+	private int lateFee; // 1일 연체료
 	
 	public Product() {} // 생성자
 	
@@ -25,8 +26,12 @@ public class Product {
 		this.productAmount = productAmount;
 	}
 	
-	public void setProductPeriod(int productPeriod) { // 물품 대여기간 setter 메소드
-		this.productPeriod = productPeriod;
+	public void setRentalFee (int rentalFee) { // 1일 대여료 setter 메소드
+		this.rentalFee = rentalFee;
+	}
+	
+	public void setLateFee (int lateFee) { // 1일 연체료 setter 메소드
+		this.lateFee = lateFee;
 	}
 	
 	public String getProductCode() { // 물품 번호 getter 메소드
@@ -45,15 +50,19 @@ public class Product {
 		return productAmount;
 	}
 	
-	public int getProductPeriod() { // 물품 대여기간 getter 메소드
-		return productPeriod;
+	public int getRentalFee() { // 1일 대여료 getter 메소드
+		return rentalFee;
 	}
 	
-	public void addStock() {
+	public int getLateFee() { // 1일 연체료 getter 메소드
+		return lateFee;
+	}
+	
+	public void addStock() { // 물품 재고 + 1
 		productStock++;
 	}
 
-	public void subtractStock() {
+	public void subtractStock() { // 물품 재고 - 1
 		if (productStock > 0) {
 			productStock--;
 			setProductStock(productStock);

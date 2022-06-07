@@ -3,16 +3,12 @@ import java.util.Date;
 public class ProductManager {
 	private final static int MAX_SIZE1 = 100;
 	private final static int MAX_SIZE2 = 50;
-	
-	private int sales; // 현재 매출액
-	private int totalsales; // 총 매출액(누적 매출액)
-	private int rentalfee; // 1일 대여료
-	private int latefee; // 1일 연체료
 
 	private Product[] plist; // 물품을 저장하는 배열 plist
 	private int pcount; // 물품 개수
 	private Member[] mlist; // 회원을 저장하는 배열 mlist
 	private int mcount; // 회원 수
+	private int sales; // 당일 매출액
 		
 	public ProductManager() { // 생성자
 		plist = new Product[MAX_SIZE1];
@@ -83,28 +79,43 @@ public class ProductManager {
 			mlist[i] = mlist[i+1]; 
 		}
 		mcount--; // 회원 수 - 1
-	}	
-	
-	/*물품 렌트 함수*/
-	public void rentalProduct(String productCode, Member m, Product p) {
-		p.subtractStock();
-		m.setRentArray(productCode);
-		m.setRentDate();
-		m.setMemberDate(m.getMemberDate());
 	}
 	
-	/*날짜 계산 함수*/
-	/*public long calculate(String memberCode) {
-		int index = -1;
-		index = searchMember(memberCode);
-		if (index != -1 || mlist[index].getMemberDate() != null) {
-			Date rentDate = mlist[index].getMemberDate();
-			Date returnDate = new Date();
-			long rentSec = returnDate.getTime() - rentDate.getTime();
-			long rentDays = rentSec / (24*60*60);
-			return rentDays;
+	/*물품 대여 함수*/
+	public void rentalProduct(int midx, int pidx, String productCode) {
+		plist[pidx].subtractStock();
+		mlist[midx].addRentArray(productCode);
+		mlist[midx].setRentDate();
+	}	
+	
+	/*물품 반납 함수*/
+	public void returnProduct(int midx, int pidx, Date today) {
+		plist[pidx].addStock();
+		int period = mlist[midx].calculate(today) - mlist[midx].getMemberPeriod(); // 실제 대여 기간 - 설정한 대여 기간
+		int fee, totalFee = 0;
+		if (period > 0) {
+			for (int j = 0; j < 3; j++) {
+				fee = mlist[midx].getMemberPeriod() * plist[pidx].getRentalFee() + period * plist[pidx].getLateFee();
+				totalFee = totalFee + fee;
+			} 
+			setSales(totalFee);
 		}
-		else return 0;
-	}*/
-
+		else {
+			for (int j = 0; j < 3; j++) {
+				fee = mlist[midx].calculate(today) * plist[pidx].getRentalFee();
+				totalFee = totalFee + fee;
+			}
+			setSales(totalFee);
+		}
+	}
+	
+	public void setSales(int sales) { // 매출 setter 메소드
+		this.sales = sales;
+	}
+	
+	public int getSales() { // 매출 getter 메소드
+		return sales;
+	}
+	
+	
 }

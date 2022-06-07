@@ -1,5 +1,7 @@
-/*관리자 UI 클래스*/
+/*UI 클래스*/
 import java.util.Scanner; // Scanner 클래스
+import java.util.Date;
+import java.util.InputMismatchException;
 
 public class Admin {
 	public static void main(String args[]) {
@@ -8,7 +10,6 @@ public class Admin {
 		
 		/* 시스템 안내창 출력 */
 		while(true) {
-			try {
 			System.out.println("********렌탈 관리 시스템 메인입니다********");
 			System.out.println("1. 관리자용 시스템\t2. 고객용 시스템\t3.시스템 종료");
 			System.out.print("실행할 시스템을 선택해주세요(숫자로 입력): ");
@@ -25,7 +26,8 @@ public class Admin {
 				System.out.println("7. 회원 삭제");
 				System.out.println("8. 회원 리스트 출력");
 				System.out.println("9. 대여 목록 출력");
-				System.out.println("10. 메인으로 돌아가기");
+				System.out.println("10. 오늘 매출 확인");
+				System.out.println("11. 메인으로 돌아가기");
 				System.out.print("실행할 메뉴를 선택해주세요(숫자로 입력): ");
 				
 				int menu = scan.nextInt(); // 메뉴 입력받기
@@ -48,8 +50,10 @@ public class Admin {
 						int amount = scan.nextInt();
 						p.setProductStock(amount);
 						p.setProductAmount(amount);
-						System.out.print("물품 대여기간: ");
-						p.setProductPeriod(scan.nextInt());
+						System.out.print("1일 대여료: ");
+						p.setRentalFee(scan.nextInt());
+						System.out.print("1일 연체료: ");
+						p.setLateFee(scan.nextInt());
 						// 입력한 물품을 배열에 추가
 						pm.insertProduct(p); 
 					}
@@ -63,7 +67,7 @@ public class Admin {
 						int idx = pm.searchProduct(scan.next());
 						p = pm.productAt(idx);
 						System.out.println("물품이 검색되었습니다.");
-						System.out.println("코드:" + p.getProductCode() + "\t\t이름:" + p.getProductName() +"\t\t재고:" + p.getProductStock() + " / " + p.getProductAmount() +"\t\t대여기간:" + p.getProductPeriod());
+						System.out.println("코드:" + p.getProductCode() + "\t\t이름:" + p.getProductName() +"\t\t재고:" + p.getProductStock() + " / " + p.getProductAmount());
 					} 
 					catch(MyException e) {
 						System.err.println("해당 코드와 일치하는 물품이 없습니다.");
@@ -89,7 +93,7 @@ public class Admin {
 					for(int i = 0; i < pm.getPcount(); i++) { // 배열의 처음부터 끝까지 물품 정보 출력
 						p = pm.productAt(i);
 						System.out.println("---------------------------------------------------------------------------------------------------------------------");
-						System.out.println("코드:" + p.getProductCode() + "\t\t이름:" + p.getProductName() +"\t\t재고:" + p.getProductStock() + " / " + p.getProductAmount() +"\t\t대여기간:" + p.getProductPeriod());
+						System.out.println("코드:" + p.getProductCode() + "\t\t이름:" + p.getProductName() +"\t\t재고:" + p.getProductStock() + " / " + p.getProductAmount());
 					}
 					System.out.println("---------------------------------------------------------------------------------------------------------------------");
 					System.out.println("\n");
@@ -101,7 +105,7 @@ public class Admin {
 					System.out.print("회원 코드: ");
 					String mcode = scan.next();
 					try {
-						pm.searchProduct(mcode);
+						pm.searchMember(mcode);
 						System.out.println("이미 존재하는 회원 코드입니다.");
 					}
 					catch(MyException e) {
@@ -110,7 +114,8 @@ public class Admin {
 						m.setMemberName(scan.next());
 						System.out.print("회원 전화번호: ");
 						m.setMemberPhone(scan.next());
-						m.setMemberDate(null);
+						System.out.print("회원 대여기간: ");
+						m.setMemberPeriod(scan.nextInt());
 						// 입력한 회원을 배열에 추가
 						pm.insertMember(m); 
 					}
@@ -124,9 +129,10 @@ public class Admin {
 						int idx = pm.searchMember(scan.next());
 						m = pm.memberAt(idx);
 						System.out.println("회원이 검색되었습니다.");
-						System.out.print("회원코드:" + m.getMemberCode() + "\t\t이름:" + m.getMemberName() +"\t\t전화번호:" + m.getMemberPhone() + "\t\t대여일자:" + m.getMemberDate() + "\t\t대여물품코드:");
+						System.out.println("회원코드:" + m.getMemberCode() + "\t\t이름:" + m.getMemberName() +"\t\t전화번호:" + m.getMemberPhone() + "\t\t대여기간:" + m.getMemberPeriod());
+						System.out.print("대여 물품 코드: ");
 						for (int j = 0; j < 3; j++) {
-							System.out.print("\t" + m.getRentArray(j));
+							System.out.print(m.getRentArray(j) + "\t");
 						}
 					} 
 					catch(MyException e) {
@@ -155,9 +161,12 @@ public class Admin {
 					for(int i = 0; i < pm.getMcount(); i++) { // 배열의 처음부터 끝까지 회원 정보 출력
 						m = pm.memberAt(i);
 						System.out.println("---------------------------------------------------------------------------------------------------------------------");
-						System.out.print("회원코드:" + m.getMemberCode() + "\t\t이름:" + m.getMemberName() +"\t\t전화번호:" + m.getMemberPhone() + "\t\t대여일자:" + m.getMemberDate() + "\t\t대여물품코드:");
+						System.out.println("회원코드:" + m.getMemberCode() + "\t\t이름:" + m.getMemberName() +"\t\t전화번호:" + m.getMemberPhone() + "\t\t대여일자:" + m.getMemberDate());
+						System.out.print("대여 물품 코드: ");
 						for (int j = 0; j < 3; j++) {
-							System.out.print("\t"+ m.getRentArray(j));
+							System.out.print(m.getRentArray(j));
+							if (j < 2)
+								System.out.print(",");
 						}
 						System.out.println("");
 					}
@@ -167,7 +176,7 @@ public class Admin {
 			
 				
 				/*대여 리스트 출력*/	
-				/*case 8:
+				/*case 9:
 					for(int i = 0; i < pm.getMcount(); i++) { // 배열의 처음부터 끝까지 회원 정보 출력
 						m = pm.memberAt(i);
 						if (m.getMemberDate() != null) {
@@ -178,27 +187,26 @@ public class Admin {
 					System.out.println("---------------------------------------------------------------------------------------------------------------------");
 					System.out.println("\n");
 					break;*/
+					
 				
-				/*날짜 계산*/
-				/*case 9:
-					System.out.println("회원 코드를 입력하세요");
-					System.out.println("회원님의 대여 기간은 "+ pm.calculate(scan.next()) + "일 입니다.");*/
-					
-					
-				/*시스템 종료*/
-				case 10: 
-					System.out.println("시스템을 종료합니다.");
+				/*오늘 매출 출력*/	
+				case 10:
+					System.out.print("오늘의 매출: "+ pm.getSales());
+					System.out.println("원");
+					System.out.println("\n");
 					break;
 						
-				
+				/*메인으로 돌아가기*/
+				case 11: 
+					System.out.println("\n");
+					break;
+	
 				/*메뉴에 없는 숫자를 입력할 경우*/	
 				default:
 					System.out.println("잘못 입력하셨습니다. 숫자 1~4 중에서 입력해주세요.");
 					System.out.println("\n");
 					break;			
 				}	
-				if (menu == 10) // while문 탈출
-						break;
 			}
 			else if (system == 2) {
 				System.out.println("\n");
@@ -206,7 +214,7 @@ public class Admin {
 				System.out.println("1. 물품 리스트 출력");
 				System.out.println("2. 물품 대여");
 				System.out.println("3. 물품 반납");
-				System.out.println("4. 시스템 종료");
+				System.out.println("4. 메인으로 돌아가기");
 				System.out.print("실행할 메뉴를 숫자로 입력해주세요: ");
 		
 				int menu = scan.nextInt(); // 메뉴 입력받기
@@ -218,71 +226,69 @@ public class Admin {
 					for(int i = 0; i < pm.getPcount(); i++) { // 배열의 처음부터 끝까지 물품 정보 출력
 						p = pm.productAt(i);
 						System.out.println("---------------------------------------------------------------------------------------------------------------------");
-						System.out.println("코드:" + p.getProductCode() + "\t\t이름:" + p.getProductName() +"\t\t재고:" + p.getProductStock() + " / " + p.getProductAmount() +"\t\t대여기간:" + p.getProductPeriod());
+						System.out.println("코드:" + p.getProductCode() + "\t\t이름:" + p.getProductName() +"\t\t재고:" + p.getProductStock() + " / " + p.getProductAmount());
 					}
 					System.out.println("---------------------------------------------------------------------------------------------------------------------");
 					System.out.println("\n");
 					break;
 					
-					/*물품 렌트*/
-					case 2:
-						System.out.print("회원 코드를 입력해주세요: ");
-						try {
-							Member m = new Member();
-							int midx = pm.searchMember(scan.next()); // 회원 코드 검색
-							m = pm.memberAt(midx);
+				/*물품 대여*/
+				case 2:
+					System.out.print("회원 코드를 입력해주세요: ");
+					try {
+						int midx = pm.searchMember(scan.next()); // 회원 코드 검색
+						for (int i = 0; i < 3; i++) {
 							System.out.print("대여할 물품 코드를 입력해주세요: ");
-							String pcode = scan.next();
 							try {
-									int pidx = pm.searchProduct(pcode);
-									p = pm.productAt(pidx);
-									if (p.getProductStock() == 0) System.out.println("해당 물품은 재고가 없습니다.");
-									else {
-										pm.rentalProduct(pcode, m, p);
-										System.out.println("물품이 대여되었습니다.");
-									}
-								} 
+								String pcode = scan.next();
+								int pidx = pm.searchProduct(pcode);
+								if (pm.productAt(pidx).getProductStock() == 0) System.out.println("해당 물품은 재고가 없습니다.");
+								else {
+									pm.rentalProduct(midx, pidx, pcode);
+									System.out.println("물품이 대여되었습니다.");
+								}
+							} 
 							catch(MyException e) {
 								System.err.println("해당 코드와 일치하는 물품이 없습니다.");
 							}
 						}
-						catch(MyException e) {
-							System.err.println("해당 코드와 일치하는 회원이 없습니다.");
-						}
-						System.out.println("\n");
-						break;
-						
-						/*System.out.print("회원 코드를 입력해주세요: ");
-						int midx = -1;
-						midx = pm.searchMember(scan.next()); // 회원 코드 검색
-						if (midx == -1) 
-							System.out.println("입력하신 회원 코드가 존재하지 않습니다.");
-						else {
-							System.out.print("렌트할 물품 코드를 입력해주세요: ");
-							String code = scan.next();
-							if (pm.rentalProduct(code) == false)
-								 System.out.println("입력하신 물품 코드와 일치하는 물품이 없습니다."); // 입력한 물품 코드에 해당하는 물품이 없는 경우
-							else { // 입력한 물품 코드에 해당하는 물품이 있는 경우
-								m = pm.memberAt(midx);
-								m.setMemberPcode(code); // 회원 m에 해당 물품코드 저장
-								m.setRentDate(); // 오늘 날짜 설정
-								System.out.print(m.getMemberDate()); // 오늘 날짜 출력
-								System.out.println(" 입력하신 물품의 대여가 완료되었습니다.");
-								m.setMemberDate(m.getMemberDate()); // 오늘 날짜 가져오기
-								int pidx = pm.searchProduct(code); 
-								p = pm.productAt(pidx); // 입력한 물품 코드에 해당하는 물품 p
-								p.setProductDate(m.getMemberDate()); // 물품 p에 오늘 날짜를 대여일자로 저장
-							}
-						}
-						System.out.println("\n");
-						break;*/
-						
+					}
+					catch(MyException e) {
+						System.err.println("해당 코드와 일치하는 회원이 없습니다.");
+					}
+					System.out.println("\n");
+					break;
 					
-				/*시스템 종료*/
-				/*case 3: 
-					System.out.println("시스템을 종료합니다.");
-					break;*/
-					
+				/*물품 반납*/
+				case 3:
+					System.out.print("회원 코드를 입력해주세요: ");
+					try {
+						int midx, pidx;
+						String pcode;
+						Date today = new Date();
+						midx = pm.searchMember(scan.next());
+						System.out.println("회원님의 대여 기간은 "+ pm.memberAt(midx).calculate(today) + "일 입니다.");
+						for (int i = 0; i < 3; i++) {
+							pcode = pm.memberAt(midx).getRentArray(i);
+							pidx = pm.searchProduct(pcode);
+							pm.returnProduct(midx, pidx, today);
+						}
+						System.out.println("물품이 모두 반납되었습니다.");
+						for (int i = 0; i <3; i++) {
+							pm.memberAt(midx).resetRentArray(i, null);
+						}
+						pm.memberAt(midx).setMemberDate(null);
+					}
+					catch(MyException e) {
+						System.err.println("해당 코드와 일치하는 회원이 없습니다.");
+					}
+					System.out.println("\n");
+					break;
+				
+				/*메인으로 돌아가기*/
+				case 4: 
+					System.out.println("\n");
+					break;
 				
 				/*메뉴에 없는 숫자를 입력할 경우*/	
 				default:
@@ -292,14 +298,13 @@ public class Admin {
 				
 				} 
 			}
-			else if (system == 3) // 시스템 종료(while문 탈출)
+			else if (system == 3) {// 시스템 종료(while문 탈출)
+				System.out.println("시스템을 종료합니다.");
 				break;
+			}
 			else {
 				System.out.println("잘못 입력하셨습니다. 숫자 1~3 중에서 입력해주세요.");
 				System.out.println("\n");
-			}
-			} catch(ArrayIndexOutOfBoundsException e) {
-				System.out.println("최대 입력 개수를 초과할 수 없습니다");
 			}
 		}
 		scan.close();
