@@ -12,7 +12,8 @@ public class Menu {
 		System.out.println("7. 체크아웃 하기");
 		System.out.println("8. 일일 매출 기록 보기");
 		System.out.println("9. 파일로 저장하기");
-		System.out.println("10. 종료");
+		System.out.println("10. 파일 읽기");
+		System.out.println("11. 종료");
 		System.out.println("--------------------------------------------");
 		System.out.printf("원하시는 프로그램 번호를 입력해주세요 : ");
 	}

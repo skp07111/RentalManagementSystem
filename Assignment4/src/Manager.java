@@ -1,6 +1,4 @@
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class Manager {
 	private Product[]productList; // 상품 배열
@@ -8,13 +6,30 @@ public class Manager {
 	private User[]userList; // 대여 배열
 	private int userCount = 0; // 대여 배열 인덱스 카운트
 	private int revenue = 0; // 일일 매출 총액 변수
+	FileInputStream fis = null;
+	DataInputStream dis = null;
 	
 	// 생성자 (상품 배열, 대여 배열 크기 설정)
 	Manager (int maxProductCount, int maxUserCount){
 		productList = new Product[maxProductCount]; // 상품 배열 크기 설정
 		userList = new User[maxUserCount]; // 대여 배열 크기 설정
+			try {
+				fis = new FileInputStream("rental.dat");
+				dis = new DataInputStream(fis);
+			} catch (FileNotFoundException e) {
+				
+			}
+//			finally {
+//				try {
+//					dis.close();
+//					fis.close();
+//				} catch (Exception e) {
+//					System.out.println("파일을 닫을 수 없습니다");
+//				}
+//			}
 	}
 	
+
 	// 코드 중복 검색
 	public void checkCode(Product p) throws Exception {
 		for (int i = 0; i < productCount; i++)
@@ -203,12 +218,18 @@ public class Manager {
 		return revenue;
 	}
 	
+	public DataInputStream getDis() {
+		return dis;
+	}
+	
 	// 파일 생성 함수
 	public void makeFile(DataOutputStream dos) throws Exception{
 		try {
+			dos.writeInt(productCount);
 			for (int i = 0; i < productCount; i++) { // product 정보 write
 				productList[i].saveProduct(dos); // read(~inputStream)할 때 고려해야함, productCount와 userCount를 먼저 출력
 			}
+			dos.writeInt(userCount);
 			for (int i = 0; i < userCount; i++) { // user 정보 write
 				userList[i].saveUser(dos);
 			}

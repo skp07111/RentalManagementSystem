@@ -127,6 +127,11 @@ public class User {
 			dos.writeUTF(phone); // user 전화번호 write
 			dos.writeUTF(rentalDay); // user 대여일자 write
 			dos.writeUTF(returnDay); // user 반납일자 write
+			dos.writeInt(rentalCount);
+			for (int i = 0; i < rentalCount; i++) {
+				dos.writeUTF(codeAt(i));
+				dos.writeInt(payAt(i));
+			}
 		}
 		catch (IOException ioe) { // 입출력 오류
 			

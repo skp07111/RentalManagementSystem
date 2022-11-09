@@ -5,11 +5,11 @@ import java.util.*;
 public class Ui {
 	public static void main(String[] args) throws Exception{
 		Scanner scan = new Scanner(System.in);
-		Manager act = new Manager(100, 100);
 		Calendar getToday = Calendar.getInstance();
-		FileOutputStream file = null; 
+		Manager act = new Manager(100, 100);
+		FileOutputStream fos = null; 
 		DataOutputStream dos = null;
-		
+		DataInputStream dis = null;
 		
 		while(true)
 		{
@@ -308,8 +308,8 @@ public class Ui {
 				
 			case 9: // 파일 저장하기
 				try {
-					file = new FileOutputStream("rental.dat"); // FileOutputStream 객체 file 생성하여 DataOutputStream 객체 생성자의 파라미터로 사용
-					dos = new DataOutputStream(file);
+					fos = new FileOutputStream("rental.dat"); // FileOutputStream 객체 file 생성하여 DataOutputStream 객체 생성자의 파라미터로 사용
+					dos = new DataOutputStream(fos);
 					act.makeFile(dos); // Manager 클래스의 makeFile 메소드 콜
 					System.out.println("파일로 저장되었습니다.");
 				} 
@@ -319,14 +319,47 @@ public class Ui {
 				finally {
 					try {
 						dos.close();
-						file.close();
+						fos.close();
 					}
 					catch (Exception e) {
 					}
 				}
 				break;
 				
-			case 10: // 종료
+			case 10: // 파일 읽기
+				try {
+					dis = act.getDis();
+					int productCount = dis.readInt();
+					System.out.println("- 전체 물품 수:" + productCount);
+					for (int i = 0; i < productCount; i++) {
+						System.out.print("물품 이름:" + dis.readUTF());
+						System.out.print("\t물품 코드:" + dis.readUTF());
+						System.out.print("\t물품 재고:" + dis.readInt());
+						System.out.println("\t물품 가격:" + dis.readInt());
+					}
+					int userCount = dis.readInt();
+					System.out.println("- 전체 사용자 수:" + userCount);
+					for (int i = 0; i < userCount; i++) {
+						System.out.print("사용자 이름:" + dis.readUTF());
+						System.out.print("\t전화번호:" + dis.readUTF());
+						System.out.print("\t대여일자:" + dis.readUTF());
+						System.out.println("\t반납일자:" + dis.readUTF());
+						int rentalCount = dis.readInt();
+						System.out.println("- 빌린 물품 수:" + rentalCount);
+						for (int j = 0; j < rentalCount; j++) {
+							System.out.print("빌린 물품 코드:" + dis.readUTF());
+							System.out.println("\t지불 가격:" + dis.readInt());
+						}
+					}
+					System.out.println("매출액은 " + dis.readInt() + "원 입니다.");
+				} catch (EOFException eofe) {
+						System.out.println("끝");
+				} catch (IOException ioe) {
+					System.out.println("파일을 읽을 수 없습니다.");
+				}
+				break;
+				
+			case 11: // 종료
 				System.out.println(" ");
 				System.out.println("프로그램을 종료합니다.");
 				break; // switch문 종료
@@ -338,7 +371,7 @@ public class Ui {
 				break; // switch문 종료
 			}
 			
-			if(menu == 10)
+			if(menu == 11)
 				break; // 반복문 종료
 		}
 		
