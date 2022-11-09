@@ -129,6 +129,7 @@ public class User {
 			dos.writeInt(rentalCount); // 대여 물품 코드 배열 개수 write
 			for (int i = 0; i < rentalCount; i++) {
 				dos.writeUTF(codeAt(i)); // 대여 물품 코드 write
+				// dos.writeInt(payAt(i)); 대여 물품 가격 추가가 필요합니다.
 			}
 		}
 		catch (Exception e){

@@ -15,8 +15,10 @@ public class Manager {
 		userList = new User[maxUserCount]; // 대여 배열 크기 설정
 		/* 파일 정보 reader */
 		try {
-			fis = new FileInputStream("rental.dat"); // FileInputStream 객체 fis 생성
-			dis = new DataInputStream(fis); // DataInputStream 객체 dis 생성
+			// 다음과 같이 코드를 작성하면 rental.dat에서 파일 이름 변경이 불가합니다.
+			// 파일 이름을 파라미터로 받을 수 있도록 FileInputStream 객체 fis는 ui에서 new해야합니다.
+			fis = new FileInputStream("rental.dat");
+			dis = new DataInputStream(fis);
 		} 
 		catch(Exception e) {
 			throw new Exception ("파일을 찾을 수 없습니다.");
@@ -231,7 +233,6 @@ public class Manager {
 	public DataInputStream getDis() {
 		return dis;
 	}
-	
 	
 	/* 파일 생성 함수 */
 	public void makeFile(DataOutputStream dos) throws Exception{

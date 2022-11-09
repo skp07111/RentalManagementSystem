@@ -11,8 +11,13 @@ public class Ui {
 		DataOutputStream dos = null;
 		FileInputStream fis = null;
 		DataInputStream dis = null;
+	
 		
 		/* 파일 read */
+		
+		// 아래 코드는 재사용이 불가한 코드이므로 객체 지향 프로그래밍과는 거리가 멉니다.
+		// write할 때와 마찬가지로 read 역시 해당 데이터가 있는 각 클래스에서 진행하여 재사용이 가능하도록 변경해야합니다.
+		
 		try {
 			fis = act.getFis(); // Manager 클래스의 FileInputStream
 			dis = act.getDis(); // Manager 클래스의 DataInputStream
