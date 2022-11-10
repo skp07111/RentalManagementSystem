@@ -7,6 +7,7 @@ public class Manager {
 	private ArrayList<User> userList; // 대여 배열
 	private int userCount = 0; // 대여 배열 인덱스 카운트
 	private int revenue = 0; // 일일 매출 총액 변수
+	// productCount, userCount 없애기
 	
 	/* 생성자 1 */
 	Manager () {
@@ -44,7 +45,11 @@ public class Manager {
 	void writeFile(DataOutputStream dos) throws Exception {
 		try {
 			dos.writeInt(productCount); // 전체 상품 개수 write
-			for (int i = 0; i < productCount; i++)
+			for (int i = 0; i < productCount; i++) 
+			// for (int i = 0; i < productList.size(); i++) size 함수가 여러번 세야함 -> 틀린 코드(비효율적)
+			
+			// num = productList.size();
+			// for (int i = 0; i < num; i++) -> 맞는 코드
 			{
 				productList.get(i).writeProduct(dos); // 상품 정보 write
 			}
@@ -90,7 +95,9 @@ public class Manager {
 		try{
 			int number = search(productCode); // 상품 배열에서 검색하기
 			Product p = productList.get(number);
+			// productList.remove(number); // 인덱스로 삭제도 가능
 			productList.remove(p); // 상품 배열에서 삭제하기
+			// if(!remove(p)) throw Exception("~");
 			productCount = productList.size();
 		}
 		catch (Exception e) {
@@ -101,6 +108,7 @@ public class Manager {
 	// 상품 객체 검색
 	public int search(String productCode) {
 		Product p = new Product(productCode);
+		// Product 클래스에 productCode set함수 만들 것 --> p.setPcode(productCode); 
 		int index = productList.indexOf(p);
 		return index;
 	}
