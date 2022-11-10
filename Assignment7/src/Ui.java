@@ -8,14 +8,13 @@ public class Ui {
 		Calendar getToday = Calendar.getInstance();
 		ObjectInputStream ois = null;
 		ObjectOutputStream oos = null;
-		Manager act;
+		Manager act = null;
 
 		try {
 			ois = new ObjectInputStream(new FileInputStream("rental.dat")); // ObjectInputStream 객체 ois 생성
 			act = new Manager(ois); // Manager 클래스 생성자
-			if (ois != null) ois.close();
 		} 
-		catch (FileNotFoundException e) {
+		catch (FileNotFoundException fnfe) {
 			while (true) {
 				System.out.println("파일을 찾을 수 없습니다. 새로운 파일에 작성하시겠습니까? (맞으면 Y/y를 아니면 N/n을 입력하세요.)");
 				String answer = scan.nextLine();
@@ -35,6 +34,19 @@ public class Ui {
 					System.out.println("다시 입력하세요.");
 			}
 		} 
+		catch (EOFException eofe) {
+			System.out.println("끝났습니다.");
+		}
+		catch (IOException ioe) {
+			System.out.println("파일 입출력 오류입니다.");
+		}
+		finally {
+			try {
+				ois.close();
+			}
+			catch (Exception e) {
+			}
+		}
 		
 		while(true)
 		{
@@ -335,9 +347,8 @@ public class Ui {
 					oos = new ObjectOutputStream(new FileOutputStream("rental.dat")); // ObjectOutputStream 객체 oos 생성
 					act.writeFile(oos); // Manager 클래스의 writeFile 메소드 콜
 					System.out.println("파일로 저장되었습니다.");
-				} catch (FileNotFoundException fnfe) {
-					System.out.println("파일이 존재하지 않습니다.");
-				} catch (IOException e) {
+				} 
+				catch (IOException ioe) {
 					System.out.println("파일 입출력 오류입니다.");
 				} finally {
 					try {

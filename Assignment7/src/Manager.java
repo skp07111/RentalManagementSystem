@@ -35,13 +35,20 @@ public class Manager {
 			Integer revenue = (Integer) ois.readObject(); // 매출액 read
 			this.revenue = revenue.intValue();
 		} 
-		catch (Exception e) {
-			throw new Exception ("파일 read 오류");
+		catch (FileNotFoundException fnfe) {
+			throw new Exception ("파일이 존재하지 않습니다.");
+		}
+		catch (EOFException eofe) {
+			throw new Exception ("끝났습니다.");
+		}
+		catch (IOException ioe) {
+			throw new Exception ("파일 입출력 오류입니다.");
 		}
 	}
 	
 	/* 파일 write 함수 */
-	void writeFile(ObjectOutputStream oos) throws Exception {
+	void writeFile(ObjectOutputStream oos) throws Exception 
+	{
 		try {
 			Integer pCount = new Integer(productList.size()); // 전체 상품 수
 			oos.writeObject(pCount); // 전체 상품 수 write
@@ -57,9 +64,10 @@ public class Manager {
 			}
 			Integer revenue = new Integer(this.revenue);
 			oos.writeObject(revenue); // 매출액 write
-		} catch (Exception e) {
-			throw new Exception ("파일 write 오류");
-		} 		
+		} 
+		catch (IOException ioe) {
+			throw new Exception ("파일 입출력 오류입니다.");
+		} 	
 	}	
 	
 	// 상품 추가
